@@ -4,16 +4,22 @@ import math
 
 WHITE = '#ffffff'
 PINK = "#e2979c"
-RED = "#e7305b"
 GREEN = "#65c18c"
 FONT_NAME = "Courier"
-WORK_MIN = 1
-SHORT_BREAK_MIN = 2
-LONG_BREAK_MIN = 3
+WORK_MIN = 25
+SHORT_BREAK_MIN = 5
+LONG_BREAK_MIN = 20
 reps = 0
+timer = None
 
 # ---------------------------- TIMER RESET ------------------------------- # 
-
+def reset_timer():
+    window.after_cancel(timer)
+    canvas.itemconfig(timer_text, text='00:00')
+    main_label.config(text='Timer')
+    checkmark_label.config(text='')
+    global reps
+    reps = 0
 # ---------------------------- TIMER MECHANISM ------------------------------- # 
 def start_timer():
     global reps
@@ -43,7 +49,8 @@ def countdown(count):
 
     canvas.itemconfig(timer_text, text=f'{count_min}:{count_sec}')
     if count > 0:
-        window.after(1000, countdown, count - 1)
+        global timer
+        timer = window.after(1000, countdown, count - 1)
     else:
         start_timer()
         marks = ''
@@ -74,7 +81,7 @@ start_button.grid(column=0, row=2)
 checkmark_label = tkinter.Label(fg= WHITE, bg=PINK, font=(FONT_NAME, 20, 'bold'))
 checkmark_label.grid(column=1, row=3)
 
-reset_button = tkinter.Button(text='Reset')
+reset_button = tkinter.Button(text='Reset', command=reset_timer)
 reset_button.grid(column=2, row=2)
 
 

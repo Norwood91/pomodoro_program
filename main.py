@@ -6,18 +6,32 @@ WHITE = '#ffffff'
 PINK = "#e2979c"
 RED = "#e7305b"
 GREEN = "#65c18c"
-YELLOW = "#f7f5dd"
 FONT_NAME = "Courier"
-WORK_MIN = 25
-SHORT_BREAK_MIN = 5
-LONG_BREAK_MIN = 20
-
+WORK_MIN = 1
+SHORT_BREAK_MIN = 2
+LONG_BREAK_MIN = 3
+reps = 0
 
 # ---------------------------- TIMER RESET ------------------------------- # 
 
 # ---------------------------- TIMER MECHANISM ------------------------------- # 
 def start_timer():
-    countdown(5 * 60)
+    global reps
+    reps += 1
+
+    work_sec = WORK_MIN * 60
+    short_break_sec = SHORT_BREAK_MIN * 60
+    long_break_sec = LONG_BREAK_MIN * 60
+
+    if reps % 8 == 0:
+        countdown(long_break_sec)
+        main_label['text'] = 'Break'
+    elif reps % 2 == 0:
+       countdown(short_break_sec)
+       main_label['text'] = 'Break'
+    else:
+       countdown(work_sec)
+       main_label['text'] = 'Study!'
 
 
 # ---------------------------- COUNTDOWN MECHANISM ------------------------------- # 
@@ -30,8 +44,13 @@ def countdown(count):
     canvas.itemconfig(timer_text, text=f'{count_min}:{count_sec}')
     if count > 0:
         window.after(1000, countdown, count - 1)
-    return count
-
+    else:
+        start_timer()
+        marks = ''
+        work_sessions = math.floor(reps/2)
+        for _ in range(work_sessions):
+            marks += '✔'
+        checkmark_label.config(text=marks)
 # ---------------------------- UI SETUP ------------------------------- #
 
 window = tkinter.Tk()
@@ -52,7 +71,7 @@ canvas.grid(column=1, row=1)
 start_button = tkinter.Button(text='Start', command=start_timer)
 start_button.grid(column=0, row=2)
 
-checkmark_label = tkinter.Label(text='✓', fg= WHITE, bg=PINK, font=(FONT_NAME, 20, 'bold'))
+checkmark_label = tkinter.Label(fg= WHITE, bg=PINK, font=(FONT_NAME, 20, 'bold'))
 checkmark_label.grid(column=1, row=3)
 
 reset_button = tkinter.Button(text='Reset')
